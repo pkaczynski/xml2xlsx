@@ -30,7 +30,7 @@ setup(
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/pypa/sampleproject',
+    url='https://github.com/marrog/xml2xlsx',
 
     # Author details
     author='M1 Marcin Rogowski',
