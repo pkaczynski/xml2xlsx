@@ -2,7 +2,7 @@ Metadata-Version: 1.1
 Name: xml2xlsx
 Version: 0.1
 Summary: XML to XLSX converter
-Home-page: https://github.com/pypa/sampleproject
+Home-page: https://github.com/marrog/xml2xlsx
 Author: M1 Marcin Rogowski
 Author-email: marcinrogowski.warsaw@gmail.com
 License: MIT
