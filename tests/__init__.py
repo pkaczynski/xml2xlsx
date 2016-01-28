@@ -27,6 +27,17 @@ class XML2XLSXTest(unittest.TestCase):
         self.assertEquals(ws["A1"].value, u"test cell")
         self.assertEquals(ws["B1"].value, u"test cell2")
 
+    def test_unicode(self):
+        template = """
+        <sheet name="test">
+            <row><cell>aąwźćńół</cell></row>
+        </sheet>
+        """
+        sheet = io.BytesIO(xml2xlsx(template))
+        wb = load_workbook(sheet)
+        ws = wb.get_sheet_by_name("test")
+        self.assertEquals(ws["A1"].value, u"aąwźćńół")
+
     def test_multiple_rows(self):
         template = """
         <sheet name="test">
