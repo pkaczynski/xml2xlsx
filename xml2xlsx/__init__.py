@@ -2,6 +2,9 @@
 import logging
 
 from lxml import etree
+from datetime import datetime
+
+from decimal import Decimal
 
 from openpyxl import Workbook
 from openpyxl.writer.dump_worksheet import WriteOnlyCell
@@ -16,6 +19,9 @@ class XML2XLSXTarget(object):
         self._current_ws = None
         self._row_buf = []
         self._cell = None
+        self._cell_type = None
+        self._cell_date_format = None
+
 
     def start(self, tag, attrib):
         if tag == 'sheet':
@@ -29,6 +35,17 @@ class XML2XLSXTarget(object):
             self._row_buf = []
         elif tag == 'cell':
             self._cell = WriteOnlyCell(self._current_ws)
+            ctype = attrib.get('type', 'unicode')
+            if ctype not in ['unicode', 'number', 'date']:
+                raise ValueError(u'Unknown cell type {ctype}.'.format(
+                    ctype=ctype,
+                ))
+            self._cell_type = ctype
+            try:
+                self._cell_date_format = attrib.get('date-fmt')
+            except KeyError:
+                raise ValueError(u"Specify 'date-fmt' attribute for 'date'"
+                                 u" type")
 
     def data(self, data):
         if self._cell:
@@ -46,6 +63,11 @@ class XML2XLSXTarget(object):
             self._current_ws.append(self._row_buf)
             self._row_buf = []
         elif tag == 'cell':
+            if self._cell_type == 'number':
+                self._cell.value = Decimal(self._cell.value)
+            elif self._cell_type == 'date':
+                self._cell.value = datetime.strptime(
+                        self._cell.value, self._cell_date_format).date()
             self._row_buf.append(self._cell)
             self._cell = None
 
