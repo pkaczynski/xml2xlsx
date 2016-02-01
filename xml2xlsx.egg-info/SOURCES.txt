@@ -2,6 +2,8 @@ MANIFEST.in
 README.rst
 setup.cfg
 setup.py
+xml2xlsx/__init__.py
+xml2xlsx/version.py
 xml2xlsx.egg-info/PKG-INFO
 xml2xlsx.egg-info/SOURCES.txt
 xml2xlsx.egg-info/dependency_links.txt
