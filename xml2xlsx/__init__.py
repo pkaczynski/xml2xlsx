@@ -64,7 +64,8 @@ class XML2XLSXTarget(object):
             self._row_buf = []
         elif tag == 'cell':
             if self._cell_type == 'number':
-                self._cell.value = Decimal(self._cell.value)
+                if self._cell.value:
+                    self._cell.value = Decimal(self._cell.value)
             elif self._cell_type == 'date':
                 self._cell.value = datetime.strptime(
                         self._cell.value, self._cell_date_format).date()
