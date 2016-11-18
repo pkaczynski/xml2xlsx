@@ -24,9 +24,10 @@ def excel_style(row, col):
         result[:0] = LETTERS[rem]
     return ''.join(result) + str(row)
 
+
 class XML2XLSXTarget(object):
     def __init__(self):
-        self.wb = Workbook(encoding='utf-8')
+        self.wb = Workbook()
         self._current_ws = None
         self._row_buf = []
         self._cell = None
@@ -136,3 +137,5 @@ def xml2xlsx(xml):
     parser = etree.XMLParser(target=XML2XLSXTarget(), encoding='UTF-8',
                              remove_blank_text=True)
     return etree.XML(xml, parser, )
+
+__all__ = ['xml2xlsx']

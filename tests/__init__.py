@@ -148,6 +148,19 @@ class XML2XLSXTest(unittest.TestCase):
         ws = wb.get_sheet_by_name("test")
         self.assertEquals(ws["A3"].value, "A1, A2")
 
+    def test_my(self):
+        template = u"""
+            <workbook>
+                <sheet name="test">
+                    <row><cell>This</cell><cell>is</cell><cell>a TEST</cell></row>
+                    <row><cell>Nice, isn&amp;t it?</cell></row>
+                </sheet>
+            </workbook>
+        """
+        sheet = io.BytesIO(xml2xlsx(template))
+        wb = load_workbook(sheet)
+        ws = wb.get_sheet_by_name("test")
+        self.assertEquals(ws["A3"].value, "A1, A2")
 
 if __name__ == '__main__':
     unittest.main()
