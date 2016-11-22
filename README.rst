@@ -60,9 +60,9 @@ Cell formatting
 ---------------
 Each cell can be specified to use one of the types:
 
-    * string (default)
-    * number
-    * date
+* string (default)
+* number
+* date
 
 Type is defined in ``type`` cell attribute. The cell value is converted
 appropriately to the type specified. If you insert a number in the cell value
@@ -212,7 +212,43 @@ This is a simple example to demonstrate the feature:
 This will generate an Excel sheet with ``A3`` cell containing formula to sum
 ``A1``, ``B1`` and ``A2`` cells (``=SUM(A1, B1, A2)``).
 
-Cell fromatting
+Referencing limitations
+~~~~~~~~~~~~~~~~~~~~~~~
+It is perfectly possible to reference a cell in another sheet with both
+``ref-id`` and ``ref-append``. However, there is a limitation to that. Since
+``xml2xslx`` is a linear parser, you are only allowed to reference already
+parsed elements. This means, you have to create sheets in a proper order (sheets
+referencing other sheets must be created **after** referenced cells are parsed).
+
+The following example **will not work**:
+
+.. code-block:: xml
+
+    ...
+    <sheet title="one">
+        <row><cell>{mycell}</cell></row>
+    </sheet>
+    <sheet title="two">
+        <row><cell ref-id="mycell">XYZ</cell></row>
+    </sheet>
+    ...
+
+However, it is possible to make this exmaple work **and** retain the same
+worksheet ordering using ``index`` attribute:
+
+.. code-block:: xml
+
+    ...
+    <sheet title="two">
+        <row><cell ref-id="mycell">XYZ</cell></row>
+    </sheet>
+    <sheet title="one" index="0">
+        <row><cell>{mycell}</cell></row>
+    </sheet>
+    ...
+
+
+Cell formatting
 ---------------
 The cell format can be specified using various attributes of the cell tag. Only
 font formatting can be specifed for now.
@@ -255,10 +291,18 @@ No attributes for now.
 
 ``sheet``
 ---------
+
 :Attribute:
-    ``name``
+    ``title``
 :Usage:
-    Specifies the name of the sheet
+    Specifies the worksheet title
+
+
+:Attribute:
+    ``index``
+:Usage:
+    Specifies the worksheet index. This is relative to already created indexes.
+    An index of 0 creates sheet at the beginning of the sheets collection.
 
 ``row``
 -------
@@ -278,6 +322,7 @@ No attributes for now
 :Default:
     ``unicode``
 
+
 :Attribute:
     ``date-fmt``
 :Usage:
@@ -285,6 +330,7 @@ No attributes for now
     functions of ``datetime`` standard python library.
 :Remarks:
     Parsed only if ``type="date"``.
+
 
 :Attribute:
     ``font``
@@ -303,7 +349,9 @@ Release History
 ~~~
 
 * Added documentation
-* Added cell referencing
+* Added cell referencing with inter-sheet possibility
+* Changed ``sheet`` title attribute from ``name`` to ``title``
+* Added possibility to set index for a sheet
 
 
 .. _openpyxl: https://bitbucket.org/openpyxl/openpyxl
