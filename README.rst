@@ -56,8 +56,8 @@ Basic features of the library include creating multiple, named sheets within one
 workbook and creating rows of cells in these sheets. However, there are more
 possibiliteis to create complex excel based reports.
 
-Cell formatting
----------------
+Cell type
+---------
 Each cell can be specified to use one of the types:
 
 * string (default)
@@ -89,6 +89,23 @@ with date formatted according to Excel defaults (and current locale).
     Excel tries to be very smart and converts date-like text to date format.
     Please use ``type="date"`` and ``date-fmt`` attribute always if you pass
     dates to cells.
+
+Columns
+-------
+Columns can be tackled only in a limited way, i.e. only column widths can be
+changed. Column properties are defined in ``columns`` tag as one or more child
+of the ``sheet`` tag. It is possible to specify a range of columns using
+``start`` and ``end`` atrributes. For example:
+
+.. code-block:: xml
+
+    ...
+    <sheet title="test">
+        <columns start="A" end="D" width="123"/>
+        <row><cell>Test</cell></row>
+    </sheet>
+    ...
+
 
 Formulas
 --------
@@ -307,6 +324,28 @@ No attributes for now.
 ``row``
 -------
 No attributes for now
+
+
+``columns``
+-----------
+
+:Attribute:
+    ``start``
+:Usage:
+    Specifies the starting column for the column range (in a letter format).
+
+:Attribute:
+    ``end``
+:Usage:
+    Specifies the ending column for the column range (in a letter format).
+:Default:
+    Same as ``start`` attribute
+
+:Attribute:
+    ``width``
+:Usage:
+    Specifies the width for all columns in the range. It is in px format.
+
 
 .. _cell:
 
