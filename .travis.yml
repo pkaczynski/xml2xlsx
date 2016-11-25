@@ -2,6 +2,10 @@ language: python
 python:
   - "2.7"
 # command to install dependencies
-install: "pip install ."
+install: 
+  - pip install .
+  - pip install coveralls
 # command to run tests
-script: nosetests -a "!performance"
+script: nosetests --with-coverage --cover-package=xml2xlsx -a "!performance"
+after_success:
+  coveralls

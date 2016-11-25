@@ -4,7 +4,12 @@ xml2xlsx
 
 .. image:: https://travis-ci.org/pkaczynski/xml2xlsx.svg?branch=master
     :target: https://travis-ci.org/pkaczynski/xml2xlsx
-    
+
+
+.. image:: https://coveralls.io/repos/github/pkaczynski/xml2xlsx/badge.svg?branch=master
+    :target: https://coveralls.io/github/pkaczynski/xml2xlsx?branch=master
+
+
 Creating ``xlsx`` files from ``xml`` template using openpyxl_.
 
 Target
