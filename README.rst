@@ -1,6 +1,10 @@
 ========
 xml2xlsx
 ========
+.. image:: https://travis-ci.org/pkaczynski/xml2xlsx/xml2xlsx.svg?branch=master
+    :target: https://travis-ci.org/pkaczynski/xml2xlsx
+    :alt: Travis
+    
 Creating ``xlsx`` files from ``xml`` template using openpyxl_.
 
 Target
