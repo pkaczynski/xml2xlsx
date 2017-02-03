@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
 
+from string import Formatter
+
 from lxml import etree
 from datetime import datetime
 
@@ -8,9 +10,8 @@ from decimal import Decimal, InvalidOperation
 
 from openpyxl import Workbook
 from openpyxl.styles.alignment import Alignment
-from openpyxl.styles.fills import PatternFill, GradientFill
+from openpyxl.styles.fills import PatternFill
 from openpyxl.styles.named_styles import NamedStyle
-from openpyxl.styles.styleable import NamedStyleDescriptor
 from openpyxl.utils import get_column_letter, column_index_from_string
 from openpyxl.styles import Font
 from openpyxl.writer.dump_worksheet import WriteOnlyCell
@@ -192,10 +193,16 @@ class XML2XLSXTarget(object):
             self._refs['row'] = self._row + 1
         elif tag == 'cell':
             if self._cell.value:
+                keys = [
+                    e[1] for e in Formatter().parse(self._cell.value)
+                    if e[1] != None
+                ]
+
                 stringified = {
-                    k: ', '.join(unicode(e) for e in v)
-                        if hasattr(v, '__iter__') else unicode(v)
-                    for k, v in self._refs.iteritems()
+                    k: ', '.join(unicode(e) for e in self._refs[k])
+                        if hasattr(self._refs[k], '__iter__')
+                        else unicode(self._refs[k])
+                    for k in keys or []
                 }
                 self._cell.value = self._cell.value.format(**stringified)
             if self._cell_type == 'number':
