@@ -240,13 +240,5 @@ def xml2xlsx(xml):
     return etree.XML(xml, parser, )
 
 
-def __main__():
-    import sys
-    sys.stdout.write(xml2xlsx.xml2xlsx(sys.stdin.read()))
-
-if __name__ == '__main__':
-    print('hello')
-
-
-__all__ = ['xml2xlsx', '__main__']
+__all__ = ['xml2xlsx']
 
