@@ -1,11 +1,16 @@
 language: python
 python:
-  - "2.7"
-  - "3.5"
-  - "3.6"
-# command to install dependencies
-install: 
-  - pip install .
-  - pip install tox-travis
-# command to run tests
+- '2.7'
+- '3.5'
+- '3.6'
+install:
+- pip install .
+- pip install tox-travis
 script: tox
+deploy:
+  provider: pypi
+  user: pkaczynski
+  password:
+    secure: Gyt/n+4CH72zTZDdnVhfsQwgObVIUabMg54mgHKLIAsPQmR4+3Bd4wrdIIqy/Ql3Y3CslmO4i/nUK4Ydmg7y6YOigajISsvIpDs4lnpcC2wwy8OvD18KX5RInC7Cmwk6kt7pc/Worb7NWSB7+CX82oE7suVmBUWeRsnU7X8htj2qF7OBycdMVmtEx0y87HtvQPHt+Vv8uzfYWVByoHhMJMbs/fIK7RdRWLwkkDJ3mWmjIV+y5K6QHlom0qw+HeMIb1XRTuoNYmLlIo2RNnRxpLCWUzRWRzVglsSBFxCT+Qep6PC+JVeCVgnkkHf9Qf2zHxvdvtFl02AYpJ01Xu6YZRFVERl36A6ILO+0hgTGJwOCpeO2TY4e7v/8gUpODbf3vzH5KffQebWxPJRg/NmQmI59czKfBQNstJZhq4x3uerXisK1s431p63k1G7okD2C7TbIVVAO0olS8he0XXiMSK4XXXYrMMFLGlD6yW39JP1UNghyFzMb9reibCNA2cs1iKFSpNN/NOEIVNYOCK1fn/+myurTIJ1zO/3zEwac1rvWWYtG00X0Tp+uwp3w7VJKj+R56jtumLVSlb4D+W7/SKmnBNkItUzdtRZaSWluOGCIzq2ucGqTz6msqCYaAMsLd8XdIjGzeinLhcpdVMYaO30NVuwgFufWMLjR3ic9KrQ=
+  on:
+    tags: true
