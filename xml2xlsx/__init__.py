@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from six import iteritems, text_type
+
 import logging
 
 from string import Formatter
@@ -72,7 +75,7 @@ class XML2XLSXTarget(object):
     def _parse_descriptor(descriptor):
         params = dict([v.split(':') for v in descriptor.split(';') if v.strip()])
         result = {}
-        for param, value in params.iteritems():
+        for param, value in iteritems(params):
             param = param.strip()
             value = value.strip()
             if value in ['True', 'False']:
@@ -129,7 +132,7 @@ class XML2XLSXTarget(object):
             self._col = 0
         elif tag == 'cell':
             self._cell = WriteOnlyCell(self._current_ws)
-            for attr, value in attrib.iteritems():
+            for attr, value in iteritems(attrib):
                 if attr == 'font':
                     self._cell.font = self._get_font(value)
                 elif attr == 'fill':
@@ -199,9 +202,9 @@ class XML2XLSXTarget(object):
                 ]
 
                 stringified = {
-                    k: ', '.join(unicode(e) for e in self._refs[k])
+                    k: ', '.join(text_type(e) for e in self._refs[k])
                         if hasattr(self._refs[k], '__iter__')
-                        else unicode(self._refs[k])
+                        else text_type(self._refs[k])
                     for k in keys or []
                 }
                 self._cell.value = self._cell.value.format(**stringified)
@@ -224,8 +227,26 @@ class XML2XLSXTarget(object):
 
 
 def xml2xlsx(xml):
+    """
+    Converts xml in a proper format to a xlsx (MS Excel) file.
+
+    The XML argument is **not** an Excel file in xml format.
+    :param xml: A string with proper xml.
+    :type xml: unicode
+    :return: Parsed xml that can be saved to a stream.
+    """
     parser = etree.XMLParser(target=XML2XLSXTarget(), encoding='UTF-8',
                              remove_blank_text=True)
     return etree.XML(xml, parser, )
 
-__all__ = ['xml2xlsx']
+
+def __main__():
+    import sys
+    sys.stdout.write(xml2xlsx.xml2xlsx(sys.stdin.read()))
+
+if __name__ == '__main__':
+    print('hello')
+
+
+__all__ = ['xml2xlsx', '__main__']
+

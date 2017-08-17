@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from six import text_type
+
 import io
 import unittest
 import logging
+import tempfile
+
 from datetime import date
 from timeit import default_timer as timer
 
@@ -14,6 +19,7 @@ from xml2xlsx import xml2xlsx, XML2XLSXTarget, CellRef
 
 logger = logging.getLogger(__name__)
 
+
 class CellRefTest(unittest.TestCase):
 
     def setUp(self):
@@ -22,19 +28,19 @@ class CellRefTest(unittest.TestCase):
     def test_unicode_same_worksheet(self):
         self.target.start(tag='sheet', attrib={'title': 'test1'})
         cell = CellRef(self.target, 0, 0)
-        self.assertEquals(unicode(cell), u'A1')
+        self.assertEquals(text_type(cell), u'A1')
 
     def test_unicode_far_column(self):
         self.target.start(tag='sheet', attrib={'title': 'test1'})
         cell = CellRef(self.target, 0, 26)
-        self.assertEquals(unicode(cell), u'AA1')
+        self.assertEquals(text_type(cell), u'AA1')
 
     def test_unicode_different_worksheet(self):
         self.target.start(tag='sheet', attrib={'title': 'test1'})
         cell = CellRef(self.target, 0, 0)
         self.target.end(tag='sheet')
         self.target.start(tag='sheet', attrib={'title': 'test2'})
-        self.assertEquals(unicode(cell), u"'test1'!A1")
+        self.assertEquals(text_type(cell), "'test1'!A1")
 
 
 class XML2XLSXTest(unittest.TestCase):
@@ -52,11 +58,22 @@ class XML2XLSXTest(unittest.TestCase):
         wb = load_workbook(sheet)
 
         self.assertEquals(len(wb.worksheets), 1,
-                          u"Created workbook should have only one sheet")
-        self.assertIn("test", wb.get_sheet_names(), u"Worksheet 'test' missing")
+                          "Created workbook should have only one sheet")
+        self.assertIn("test", wb.get_sheet_names(), "Worksheet 'test' missing")
         ws = wb.get_sheet_by_name("test")
-        self.assertEquals(ws["A1"].value, u"test cell")
-        self.assertEquals(ws["B1"].value, u"test cell2")
+        self.assertEquals(ws["A1"].value, "test cell")
+        self.assertEquals(ws["B1"].value, "test cell2")
+
+    def test_save_to_file(self):
+        template = '<sheet title="test"></sheet>'
+        f = tempfile.TemporaryFile()
+        f.write(xml2xlsx(template))
+        f.seek(0)
+        wb = load_workbook(f)
+        self.assertEquals(len(wb.worksheets), 1,
+                          "Created workbook should have only one sheet")
+        self.assertIn("test", wb.get_sheet_names(), "Worksheet 'test' missing")
+        f.close()
 
     def test_xml_special_chars(self):
         template = """
@@ -70,7 +87,7 @@ class XML2XLSXTest(unittest.TestCase):
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
         ws = wb.get_sheet_by_name("test")
-        self.assertEquals(ws["A1"].value, u"2<=3")
+        self.assertEquals(ws["A1"].value, "2<=3")
 
     def test_cell_font(self):
         template = """
@@ -85,8 +102,8 @@ class XML2XLSXTest(unittest.TestCase):
         wb = load_workbook(sheet)
 
         self.assertEquals(len(wb.worksheets), 1,
-                          u"Created workbook should have only one sheet")
-        self.assertIn("test", wb.get_sheet_names(), u"Worksheet 'test' missing")
+                          "Created workbook should have only one sheet")
+        self.assertIn("test", wb.get_sheet_names(), "Worksheet 'test' missing")
         ws = wb.get_sheet_by_name("test")
         self.assertEquals(ws["A1"].font.size, 10, "Font size not set properly")
         self.assertTrue(ws["A1"].font.bold, "Font is not bold")
@@ -98,11 +115,10 @@ class XML2XLSXTest(unittest.TestCase):
                 <cell fill="fill_type: solid; bgColor: 00BFBFBF">test</cell>
             </row>
         </sheet>
-
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        self.assertIn("test", wb.get_sheet_names(), u"Worksheet 'test' missing")
+        self.assertIn("test", wb.get_sheet_names(), "Worksheet 'test' missing")
         ws = wb.get_sheet_by_name("test")
         self.assertEquals(ws["A1"].fill.fill_type, 'solid')
         self.assertEquals(ws["A1"].fill.bgColor.rgb, "00BFBFBF")
@@ -116,7 +132,7 @@ class XML2XLSXTest(unittest.TestCase):
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
         ws = wb.get_sheet_by_name("test")
-        self.assertEquals(ws["A1"].value, u"aąwźćńół")
+        self.assertEquals(ws["A1"].value, "aąwźćńół")
 
     def test_multiple_rows(self):
         template = """
@@ -132,11 +148,11 @@ class XML2XLSXTest(unittest.TestCase):
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
         ws = wb.get_sheet_by_name("test")
-        self.assertEquals(ws["A1"].value, u"test cell")
-        self.assertEquals(ws["A2"].value, u"test cell2")
+        self.assertEquals(ws["A1"].value, "test cell")
+        self.assertEquals(ws["A2"].value, "test cell2")
 
     def test_cell_type_number(self):
-        template = u"""
+        template = """
         <sheet title="test"><row><cell type="number">1123.4</cell></row>
         </sheet>
         """
@@ -146,7 +162,7 @@ class XML2XLSXTest(unittest.TestCase):
         self.assertEquals(ws["A1"].value, 1123.4)
 
     def test_cell_type_date(self):
-        template = u"""
+        template = """
         <sheet title="test">
             <row><cell type="date" date-fmt="%d.%m.%Y">24.01.1981</cell></row>
         </sheet>
@@ -154,10 +170,10 @@ class XML2XLSXTest(unittest.TestCase):
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
         ws = wb.get_sheet_by_name("test")
-        self.assertEquals(ws["A1"].value.date(), date(1981, 01, 24))
+        self.assertEquals(ws["A1"].value.date(), date(1981, 1, 24))
 
     def test_cell_number_format(self):
-        template = u"""
+        template = """
         <sheet title="test">
             <row>
                 <cell type="number" fmt="# ##0.000;[RED]# ##0.000">
@@ -172,7 +188,7 @@ class XML2XLSXTest(unittest.TestCase):
         self.assertEquals(ws["A1"].number_format, '# ##0.000;[RED]# ##0.000')
 
     def test_cell_alignment(self):
-        template = u"""
+        template = """
         <sheet title="test">
             <row>
                 <cell alignment="horizontal: general">
@@ -187,7 +203,7 @@ class XML2XLSXTest(unittest.TestCase):
         self.assertEquals(ws["A1"].alignment.horizontal, 'general')
 
     def test_cell_ref_id(self):
-        template = u"""
+        template = """
         <sheet title="test">
             <row><cell ref-id="refcell">XXXX</cell></row>
             <row><cell>{refcell}</cell></row>
@@ -199,7 +215,7 @@ class XML2XLSXTest(unittest.TestCase):
         self.assertEquals(ws["A2"].value, "A1")
 
     def test_cell_ref_id_different_worksheet(self):
-        template = u"""
+        template = """
         <workbook>
             <sheet title="test">
                 <row><cell ref-id="refcell">XXXX</cell></row>
@@ -215,7 +231,7 @@ class XML2XLSXTest(unittest.TestCase):
         self.assertEquals(wb['test2']["A1"].value, "'test'!A1")
 
     def test_cell_ref_col(self):
-        template = u"""
+        template = """
         <sheet title="test">
             <row><cell>{col}</cell><cell>{col}</cell></row>
         </sheet>
@@ -227,7 +243,7 @@ class XML2XLSXTest(unittest.TestCase):
         self.assertEquals(ws["B1"].value, "2")
 
     def test_cell_ref_row(self):
-        template = u"""
+        template = """
         <sheet title="test">
             <row><cell>{row}</cell></row>
             <row><cell>{row}</cell></row>
@@ -240,7 +256,7 @@ class XML2XLSXTest(unittest.TestCase):
         self.assertEquals(ws["A2"].value, "2")
 
     def test_cell_ref_append(self):
-        template = u"""
+        template = """
         <sheet title="test">
             <row><cell ref-append="my-list">ABC</cell></row>
             <row><cell ref-append="my-list">DEFG</cell></row>
@@ -253,7 +269,7 @@ class XML2XLSXTest(unittest.TestCase):
         self.assertEquals(ws["A3"].value, "A1, A2")
 
     def test_sheet_index_attrib(self):
-        template = u"""
+        template = """
         <workbook>
             <sheet title="test">
             </sheet>
@@ -267,7 +283,7 @@ class XML2XLSXTest(unittest.TestCase):
         self.assertListEqual(wb.sheetnames, ["test2", "test"])
 
     def test_column_width(self):
-        template = u"""
+        template = """
         <workbook>
             <sheet title="test">
                 <columns start="A" end="D" width="14"/>
@@ -282,7 +298,7 @@ class XML2XLSXTest(unittest.TestCase):
         self.assertEquals(ws.column_dimensions['E'].width, None)
 
     def test_named_style(self):
-        template = u"""
+        template = """
         <workbook>
             <style name="test"/>
             <sheet title="test"/>
@@ -292,8 +308,8 @@ class XML2XLSXTest(unittest.TestCase):
         wb = load_workbook(sheet)
         self.assertIn('test', wb.style_names)
 
-    def test_named_style_font(self):
-        template = u"""
+    def test_named_style(self):
+        template = """
         <workbook>
             <style name="test"/>
             <sheet title="test"><row><cell>a</cell></row></sheet>
@@ -304,7 +320,7 @@ class XML2XLSXTest(unittest.TestCase):
         self.assertIn('test', wb.style_names)
 
     def test_named_style_font(self):
-        template = u"""
+        template = """
         <workbook>
             <style name="test" font="bold: True;"/>
             <sheet title="test"/>
@@ -317,7 +333,7 @@ class XML2XLSXTest(unittest.TestCase):
         self.assertTrue(style.font.bold)
 
     def test_named_style_fill_solid(self):
-        template = u"""
+        template = """
         <workbook>
             <style name="test" fill="fill_type: solid; fgColor: BFBFBF"/>
             <sheet title="test"/>

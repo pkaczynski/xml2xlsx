@@ -1,11 +1,11 @@
 language: python
 python:
   - "2.7"
+  - "3.5"
+  - "3.6"
 # command to install dependencies
 install: 
   - pip install .
-  - pip install coveralls
+  - pip install tox-travis
 # command to run tests
-script: nosetests --with-coverage --cover-package=xml2xlsx -a "!performance"
-after_success:
-  coveralls
+script: tox
