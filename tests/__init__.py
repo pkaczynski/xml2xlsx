@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from six import text_type
 
 import io
-import unittest
 import logging
 import tempfile
-
+import unittest
 from datetime import date
 from timeit import default_timer as timer
 
@@ -14,6 +12,7 @@ from nose.plugins.attrib import attr
 from openpyxl.reader.excel import load_workbook
 from openpyxl.styles.alignment import Alignment
 from openpyxl.styles.fills import PatternFill
+from six import text_type
 
 from xml2xlsx import xml2xlsx, XML2XLSXTarget, CellRef
 
@@ -59,8 +58,8 @@ class XML2XLSXTest(unittest.TestCase):
 
         self.assertEquals(len(wb.worksheets), 1,
                           "Created workbook should have only one sheet")
-        self.assertIn("test", wb.get_sheet_names(), "Worksheet 'test' missing")
-        ws = wb.get_sheet_by_name("test")
+        self.assertIn("test", wb.sheetnames, "Worksheet 'test' missing")
+        ws = wb["test"]
         self.assertEquals(ws["A1"].value, "test cell")
         self.assertEquals(ws["B1"].value, "test cell2")
 
@@ -72,7 +71,7 @@ class XML2XLSXTest(unittest.TestCase):
         wb = load_workbook(f)
         self.assertEquals(len(wb.worksheets), 1,
                           "Created workbook should have only one sheet")
-        self.assertIn("test", wb.get_sheet_names(), "Worksheet 'test' missing")
+        self.assertIn("test", wb.sheetnames, "Worksheet 'test' missing")
         f.close()
 
     def test_xml_special_chars(self):
@@ -86,7 +85,7 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        ws = wb.get_sheet_by_name("test")
+        ws = wb["test"]
         self.assertEquals(ws["A1"].value, "2<=3")
 
     def test_cell_font(self):
@@ -103,8 +102,8 @@ class XML2XLSXTest(unittest.TestCase):
 
         self.assertEquals(len(wb.worksheets), 1,
                           "Created workbook should have only one sheet")
-        self.assertIn("test", wb.get_sheet_names(), "Worksheet 'test' missing")
-        ws = wb.get_sheet_by_name("test")
+        self.assertIn("test", wb.sheetnames, "Worksheet 'test' missing")
+        ws = wb["test"]
         self.assertEquals(ws["A1"].font.size, 10, "Font size not set properly")
         self.assertTrue(ws["A1"].font.bold, "Font is not bold")
 
@@ -118,8 +117,8 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        self.assertIn("test", wb.get_sheet_names(), "Worksheet 'test' missing")
-        ws = wb.get_sheet_by_name("test")
+        self.assertIn("test", wb.sheetnames, "Worksheet 'test' missing")
+        ws = wb["test"]
         self.assertEquals(ws["A1"].fill.fill_type, 'solid')
         self.assertEquals(ws["A1"].fill.bgColor.rgb, "00BFBFBF")
 
@@ -131,7 +130,7 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        ws = wb.get_sheet_by_name("test")
+        ws = wb["test"]
         self.assertEquals(ws["A1"].value, "aąwźćńół")
 
     def test_multiple_rows(self):
@@ -147,7 +146,7 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        ws = wb.get_sheet_by_name("test")
+        ws = wb["test"]
         self.assertEquals(ws["A1"].value, "test cell")
         self.assertEquals(ws["A2"].value, "test cell2")
 
@@ -158,7 +157,7 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        ws = wb.get_sheet_by_name("test")
+        ws = wb["test"]
         self.assertEquals(ws["A1"].value, 1123.4)
 
     def test_cell_type_date(self):
@@ -169,7 +168,7 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        ws = wb.get_sheet_by_name("test")
+        ws = wb["test"]
         self.assertEquals(ws["A1"].value.date(), date(1981, 1, 24))
 
     def test_cell_number_format(self):
@@ -184,7 +183,7 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        ws = wb.get_sheet_by_name("test")
+        ws = wb["test"]
         self.assertEquals(ws["A1"].number_format, '# ##0.000;[RED]# ##0.000')
 
     def test_cell_alignment(self):
@@ -199,7 +198,7 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        ws = wb.get_sheet_by_name("test")
+        ws = wb["test"]
         self.assertEquals(ws["A1"].alignment.horizontal, 'general')
 
     def test_cell_ref_id(self):
@@ -211,8 +210,19 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        ws = wb.get_sheet_by_name("test")
+        ws = wb["test"]
         self.assertEquals(ws["A2"].value, "A1")
+
+    def test_cell_ref_id_inexistent(self):
+        template = """
+        <sheet title="test">
+            <row><cell>{refcell}</cell></row>
+        </sheet>
+        """
+        sheet = io.BytesIO(xml2xlsx(template))
+        wb = load_workbook(sheet)
+        ws = wb["test"]
+        self.assertEquals(ws["A1"].value, None)
 
     def test_cell_ref_id_different_worksheet(self):
         template = """
@@ -238,7 +248,7 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        ws = wb.get_sheet_by_name("test")
+        ws = wb["test"]
         self.assertEquals(ws["A1"].value, "1")
         self.assertEquals(ws["B1"].value, "2")
 
@@ -251,7 +261,7 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        ws = wb.get_sheet_by_name("test")
+        ws = wb["test"]
         self.assertEquals(ws["A1"].value, "1")
         self.assertEquals(ws["A2"].value, "2")
 
@@ -265,7 +275,7 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        ws = wb.get_sheet_by_name("test")
+        ws = wb["test"]
         self.assertEquals(ws["A3"].value, "A1, A2")
 
     def test_sheet_index_attrib(self):
@@ -279,7 +289,6 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        ws = wb.get_sheet_by_name("test")
         self.assertListEqual(wb.sheetnames, ["test2", "test"])
 
     def test_column_width(self):
@@ -292,7 +301,7 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        ws = wb.get_sheet_by_name("test")
+        ws = wb["test"]
         for col in ['A', 'B', 'C', 'D']:
             self.assertEquals(ws.column_dimensions[col].width, 2)
         self.assertEquals(ws.column_dimensions['E'].width, None)
