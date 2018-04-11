@@ -1,24 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from six import iteritems, text_type
 
 import logging
-
+from datetime import datetime
+from decimal import Decimal, InvalidOperation
 from string import Formatter
 
 from lxml import etree
-from datetime import datetime
-
-from decimal import Decimal, InvalidOperation
-
 from openpyxl import Workbook
+from openpyxl.styles import Font
 from openpyxl.styles.alignment import Alignment
 from openpyxl.styles.fills import PatternFill
 from openpyxl.styles.named_styles import NamedStyle
 from openpyxl.utils import get_column_letter, column_index_from_string
-from openpyxl.styles import Font
-from openpyxl.writer.dump_worksheet import WriteOnlyCell
 from openpyxl.writer.excel import save_virtual_workbook
+from openpyxl.writer.write_only import WriteOnlyCell
+from six import iteritems, text_type
 
 logger = logging.getLogger(__name__)
 
