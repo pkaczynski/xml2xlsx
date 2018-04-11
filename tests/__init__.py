@@ -213,6 +213,17 @@ class XML2XLSXTest(unittest.TestCase):
         ws = wb["test"]
         self.assertEquals(ws["A2"].value, "A1")
 
+    def test_cell_ref_id_inexistent(self):
+        template = """
+        <sheet title="test">
+            <row><cell>{refcell}</cell></row>
+        </sheet>
+        """
+        sheet = io.BytesIO(xml2xlsx(template))
+        wb = load_workbook(sheet)
+        ws = wb["test"]
+        self.assertEquals(ws["A1"].value, None)
+
     def test_cell_ref_id_different_worksheet(self):
         template = """
         <workbook>
@@ -278,7 +289,6 @@ class XML2XLSXTest(unittest.TestCase):
         """
         sheet = io.BytesIO(xml2xlsx(template))
         wb = load_workbook(sheet)
-        ws = wb["test"]
         self.assertListEqual(wb.sheetnames, ["test2", "test"])
 
     def test_column_width(self):

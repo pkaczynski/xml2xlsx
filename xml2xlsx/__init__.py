@@ -199,9 +199,9 @@ class XML2XLSXTarget(object):
                 ]
 
                 stringified = {
-                    k: ', '.join(text_type(e) for e in self._refs[k])
-                        if hasattr(self._refs[k], '__iter__')
-                        else text_type(self._refs[k])
+                    k: ', '.join(text_type(e) for e in self._refs.get(k, ''))
+                        if hasattr(self._refs.get(k, ''), '__iter__')
+                        else text_type(self._refs.get(k, ''))
                     for k in keys or []
                 }
                 self._cell.value = self._cell.value.format(**stringified)
