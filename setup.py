@@ -11,7 +11,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='xml2xlsx',
-    version='1.0.1',
+    version='1.0.2',
     description='XML to XLSX converter',
     long_description=long_description,
     url='https://github.com/marrog/xml2xlsx',
@@ -26,11 +26,11 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.6+',
     ],
     keywords='xml lxml xlsx development',
     packages=['xml2xlsx'],
-    install_requires=['lxml>=3.6', 'openpyxl>=2.4.7,<2.5', 'six>=1.10'],
+    install_requires=['lxml>=3.6', 'openpyxl>=2.5.0', 'six>=1.10'],
     test_requires=['nose', 'tox', 'coverage'],
     entry_points={
         'console_scripts': ['xml2xlsx=xml2xlsx.command_line:main'],
