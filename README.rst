@@ -2,24 +2,6 @@
 xml2xlsx
 ========
 
-.. image:: https://travis-ci.org/pkaczynski/xml2xlsx.svg?branch=master
-    :target: https://travis-ci.org/pkaczynski/xml2xlsx
-
-
-.. image:: https://coveralls.io/repos/github/pkaczynski/xml2xlsx/badge.svg?branch=master
-    :target: https://coveralls.io/github/pkaczynski/xml2xlsx?branch=master
-
-
-.. image:: https://img.shields.io/pypi/v/xml2xlsx.svg
-    :target: https://pypi.python.org/pypi/xml2xlsx
-    
-.. image:: https://img.shields.io/pypi/pyversions/xml2xlsx.svg
-    :target: https://pypi.python.org/pypi/xml2xlsx/
-    
-.. image:: https://img.shields.io/pypi/dd/xml2xlsx.svg
-    :target: https://pypi.python.org/pypi/xml2xlsx/
-
-
 Creating ``xlsx`` files from ``xml`` template using openpyxl_.
 
 Target
