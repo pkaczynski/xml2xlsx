@@ -14,7 +14,7 @@ from openpyxl.styles.fills import PatternFill
 from openpyxl.styles.named_styles import NamedStyle
 from openpyxl.utils import get_column_letter, column_index_from_string
 from openpyxl.writer.excel import save_virtual_workbook
-from openpyxl.writer.write_only import WriteOnlyCell
+from openpyxl.cell import WriteOnlyCell
 from six import iteritems, text_type
 
 logger = logging.getLogger(__name__)
