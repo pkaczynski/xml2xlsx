@@ -11,7 +11,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='xml2xlsx',
-    version='1.0.1',
+    version='1.0.2',
     description='XML to XLSX converter',
     long_description=long_description,
     url='https://github.com/marrog/xml2xlsx',
