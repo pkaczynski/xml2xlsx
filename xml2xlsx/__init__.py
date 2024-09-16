@@ -55,7 +55,7 @@ class CellRef(object):
 class XML2XLSXTarget(object):
 
     def __init__(self):
-        self.wb = Workbook(write_only=False)
+        self.wb = Workbook(write_only=True)
         self._current_ws = None
         self._row_buf = []
         self._cell = None
@@ -107,9 +107,9 @@ class XML2XLSXTarget(object):
     def start(self, tag, attrib):
         if tag == 'sheet':
             if not self._current_ws:
-                self._current_ws = self.wb.active
-                if 'title' in attrib:
-                    self._current_ws.title = attrib['title']
+                self._current_ws = self.wb.create_sheet(
+                    title=attrib.get('title', None)
+                )
             else:
                 index = int(attrib.get('index')) if 'index' in attrib else None
                 self._current_ws = self.wb.create_sheet(
@@ -233,7 +233,7 @@ def xml2xlsx(xml):
     :return: Parsed xml that can be saved to a stream.
     """
     parser = etree.XMLParser(target=XML2XLSXTarget(), encoding='UTF-8',
-                             remove_blank_text=True)
+                             remove_blank_text=True, huge_tree=True)
     return etree.XML(xml, parser, )
 
 
