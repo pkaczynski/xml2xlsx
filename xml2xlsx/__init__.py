@@ -54,8 +54,9 @@ class CellRef(object):
 
 class XML2XLSXTarget(object):
 
-    def __init__(self):
-        self.wb = Workbook(write_only=True)
+    def __init__(self, write_only=False):
+        self.write_only = write_only
+        self.wb = Workbook(write_only=write_only)
         self._current_ws = None
         self._row_buf = []
         self._cell = None
@@ -105,11 +106,22 @@ class XML2XLSXTarget(object):
             # return GradientFill(**params)
 
     def start(self, tag, attrib):
+
+        if not self._current_ws:
+            self._current_ws = self.wb.active
+            if 'title' in attrib:
+                self._current_ws.title = attrib['title']
+
         if tag == 'sheet':
             if not self._current_ws:
-                self._current_ws = self.wb.create_sheet(
-                    title=attrib.get('title', None)
-                )
+                if self.write_only:
+                    self._current_ws = self.wb.create_sheet(
+                        title=attrib.get('title', 'Sheet')
+                    )
+                else:
+                    self._current_ws = self.wb.active
+                    if 'title' in attrib:
+                        self._current_ws.title = attrib['title']
             else:
                 index = int(attrib.get('index')) if 'index' in attrib else None
                 self._current_ws = self.wb.create_sheet(

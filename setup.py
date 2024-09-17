@@ -6,14 +6,15 @@ from setuptools import setup
 
 here = path.abspath(path.dirname(__file__))
 
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
     name='xml2xlsx',
-    version='1.0.2',
+    version='1.0.3',
     description='XML to XLSX converter',
-    long_description=long_description,
+    long_description='XML to XLSX converter',
+    long_description_content_type='text/markdown',
     url='https://github.com/marrog/xml2xlsx',
     author='Piotr Kaczyński',
     author_email='pkaczyns@gmail.com',
