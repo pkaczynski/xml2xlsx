@@ -10,7 +10,7 @@ test:
   - echo "Dummy testing"
 
 release-py27:
-  stage: backup-image
+  stage: release
   image: docker-io.adm.p-2.pl/python:2.7
   variables:
     PIP_INDEX_URL: https://nexus.p-2.pl/repository/pypiorg/simple
@@ -20,6 +20,7 @@ release-py27:
   - master
   tags:
     - docker
+    - vmc1
   script:
     - pip install twine
     - python setup.py sdist bdist_wheel
