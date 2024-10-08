@@ -1,0 +1,26 @@
+stages:
+  - test
+  - release
+
+test:
+  stage: test
+  variables:
+    GIT_STRATEGY: none
+  script:
+  - echo "Dummy testing"
+
+release-py27:
+  stage: backup-image
+  image: docker-io.adm.p-2.pl/python:2.7
+  variables:
+    PIP_INDEX_URL: https://nexus.p-2.pl/repository/pypiorg/simple
+    PIP_EXTRA_INDEX_URL: https://nexus.p-2.pl/repository/pypip-2pl/simple
+    NO_PROXY: gitlab.p-2.pl,nexus8085.p-2.pl
+  only:
+  - master
+  tags:
+    - docker
+  script:
+    - pip install twine
+    - python setup.py sdist bdist_wheel
+    - twine upload --repository-url=https://nexus.p-2.pl/reposiotyr/pypip-2pl/
