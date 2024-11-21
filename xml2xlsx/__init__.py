@@ -224,8 +224,12 @@ class XML2XLSXTarget(object):
                     except InvalidOperation:
                         pass
             elif self._cell_type == 'date':
-                self._cell.value = datetime.strptime(
-                        self._cell.value, self._cell_date_format).date()
+                if self._cell.value:
+                    try:
+                        self._cell.value = datetime.strptime(
+                            self._cell.value, self._cell_date_format).date()
+                    except TypeError:
+                        pass
             self._row_buf.append(self._cell)
             self._cell = None
             self._col += 1

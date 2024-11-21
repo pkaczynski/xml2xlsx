@@ -171,6 +171,17 @@ class XML2XLSXTest(unittest.TestCase):
         ws = wb["test"]
         self.assertEquals(ws["A1"].value.date(), date(1981, 1, 24))
 
+    def test_empty_cell_type_date(self):
+        template = """
+        <sheet title="test">
+            <row><cell type="date" date-fmt="%d.%m.%Y"></cell></row>
+        </sheet>
+        """
+        sheet = io.BytesIO(xml2xlsx(template))
+        wb = load_workbook(sheet)
+        ws = wb['test']
+        self.assertEquals(ws['A1'].value, None)
+
     def test_cell_number_format(self):
         template = """
         <sheet title="test">
